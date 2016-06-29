@@ -3,6 +3,8 @@ netfilter and iptables best-practise
 Launch the program as root, either with a destination pcap file or not, and send any ipv4 traffic that you want to it.
 
 ---------
+$ yum install conntrack-tools -y && yum install libnetfilter_queue-devel.x86_64 -y
+
 $ gcc -g -Wall -o nfqueue_recorder nfqueue_recorder.c -lnetfilter_queue -lpcap
 
 $ sudo ./nfqueue_recorder -o todays-traffic.pcap
