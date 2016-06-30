@@ -12,6 +12,11 @@
 # conntrack -E -p tcp --orig-port-dst 9091 # tcp conn state-changing event at port 9091
 # iptables -t raw -A OUTPUT -o lo -j NOTRACK # no conntrack for ipc
 
+# LOG target, for debugging rule-set
+# iptables -A INPUT -p tcp --dport 10194 -j LOG --log-tcp-options --log-tcp-sequence --log-prefix "INPUT 10194"
+# iptables -A OUTPUT -p tcp --sport 10194 -j LOG --log-tcp-options --log-tcp-sequence --log-prefix "OUTPUT 10194"
+
+
 # time extension module to restrict service access time
 # iptables -t filter -A INPUT -p tcp --dport 22 -m time --datestart "2016-12-12T00:00:00" --datestop "2016-12-12T23:59:59" --utc -j DROP
 
