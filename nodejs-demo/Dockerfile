@@ -1,4 +1,4 @@
-FROM node:argon
+FROM mesos-master:5000/nodejs-base
 
 # Create app directory
 RUN mkdir -p /usr/src/app
@@ -13,5 +13,3 @@ COPY . /usr/src/app
 
 EXPOSE 8080
 CMD [ "npm", "start" ]
-
-
