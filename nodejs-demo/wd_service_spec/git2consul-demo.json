@@ -2,7 +2,7 @@
   "version": "1.0",
   "local_store": "/var/lib/git2consul_cache",
   "repos" : [{
-  	"name" : "netfilter_config_name_prefix",
+  	"name" : "nodejs-demo",
 	"url" : "https://github.com/numenshane/netfilter.git",
 	"support_tags": true,
 	"source_root": "nodejs-demo/wd_service_spec",
