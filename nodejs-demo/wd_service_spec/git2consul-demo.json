@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "local_store": "/var/lib/git2consul_cache",
+  "no_daemon": "true",
   "repos" : [{
   	"name" : "nodejs-demo",
 	"url" : "https://github.com/numenshane/netfilter.git",
