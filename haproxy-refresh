@@ -1,0 +1,29 @@
+#!/bin/bash
+#Author: Tian Chi
+#Date: 2016-08-12
+#Desc: script for reload haproxy when changes happening for mesos service 
+
+echo `date` starting
+run_cmd="/usr/sbin/haproxy -D -f /etc/haproxy/haproxy.cfg -p /run/haproxy.pid"
+/usr/local/bin/haproxy-marathon-bridge 10.209.192.11:8080 > /tmp/haproxy.cfg
+if ! diff -q /tmp/haproxy.cfg /etc/haproxy/haproxy.cfg >&2
+  then
+    cat /tmp/haproxy.cfg > /etc/haproxy/haproxy.cfg
+    #reload haproxy 
+	pid=`cat /run/haproxy.pid`
+	ps -elf |grep $pid |grep haproxy
+	if [ $? -eq 0 ];then
+	    $run_cmd -sf $pid
+	else
+		killall haproxy
+	    $run_cmd
+	fi
+  else
+    # make sure haproxy running
+	# lsof -c haproxy > /dev/null 2>&1
+    ps -elf | grep haproxy |grep -v 'grep'
+	if [ $? -ne 0 ];then
+    	$run_cmd
+	fi
+fi
+echo `date` ended

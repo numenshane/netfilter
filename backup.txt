@@ -1,0 +1,35 @@
+docker run --name tian-docker-registry -d -v /opt/data/registry:/tmp/registry -p 10000:5000 -e GUNICORN_OPTS=["--preload"] registry
+
+alias proxyon="export http_proxy='http://207.226.141.162:10018';export https_proxy='http://207.226.141.162:10018';export HTTPS_PROXY='http://207.226.141.162:10018'"
+
+alias proxyoff="export http_proxy='';export https_proxy=''"
+
+
+echo "use conntrack -E -p tcp --orig-port-dst 10194 >> 10194_ip.log" 
+while true ;do cat 10194_ip.log |grep '\[NEW\]'|awk '{print $6}'|tr -d "src="|sort |uniq -c ; echo "----------------"; sleep 3; done
+
+if [[ `ps -elf|grep "ssh -i /root/.ssh/ssh_rsa_key -D \*:10194"|wc -l` -eq 0 ]]; then 
+    ssh -i /root/.ssh/ssh_rsa_key -D "*:10194" root@207.226.141.162 -fgCN -o TCPKeepAlive=yes; 
+fi
+
+if [[ `ps -elf|grep "ssh -L 10091:10.209.192.11:5050"|wc -l` -lt 2 ]]; then 
+    ssh -L 10091:10.209.192.11:5050 -i id_rsa root@10.209.192.11 -f -g -N -C -o TCPKeepAlive=yes
+fi
+
+# docker run -d -p 49001:8080 --restart=always -v /opt/jenkins:/var/jenkins_home -t jenkins
+
+# debugging nodejs
+# iptables -t nat -I PREROUTING -p tcp -d 10.77.131.0/24 --dport 10082 -j DNAT --to-destination 127.0.0.1:8080
+
+# mkdir -p /opt/mount  && mount -t nfs 10.209.192.11:/opt/nfs_shared /opt/mount
+
+
+#crontab
+* * * * * ( /root/.ssh/sock_exist.sh > /dev/null 2>&1 )
+* * * * * ( ssh_local_forwarding.sh > /dev/null 2>&1 )
+* * * * * ( ntpdate mesos-master > /dev/null 2>&1 )
+* * * * * ( docker rm `docker ps -f status=exited -q` > /dev/null 2>&1 )
+*/2 * * * * ( /Data/bypy/daemon.sh /Data/youtube >> /Data/bypy/bypy.log 2>&1 )
+* * * * * ( /usr/local/bin/haproxy-refresh >> /tmp/haproxy-refresh.log 2>&1 )
+
+
